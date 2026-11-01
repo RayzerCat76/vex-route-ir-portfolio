@@ -4,6 +4,8 @@
 
 ## Try the current prototype
 
+The [guided browser prototype](https://rayzercat76.github.io/vex-route-ir-portfolio/) demonstrates one relative move without installation. It uses a deliberately narrow deterministic parser and a direction sketch, not the Ollama model or a robot. For the actual model path, use the CLI below.
+
 Requirements: Python 3.11+, [Ollama](https://ollama.com/), and a downloaded model. From this repository:
 
 ```sh
@@ -22,7 +24,7 @@ The first design separated language interpretation from deterministic validation
 
 ## Verified scope and limitation
 
-On 1 November 2026, the exported snapshot passed its three focused validator tests. A local `qwen3:1.7b` run correctly converted the forward-30-centimeter example above and the validator returned `VALID`. Another request to reverse 30 centimeters produced a structurally valid but semantically wrong forward move. The validator checks structure and game constraints; it does not prove the model understood the original sentence. The larger `qwen3:4b` model timed out in a 75-second local trial. These examples are local tests, not an external accuracy claim.
+On 1 November 2026, the current portfolio snapshot passed six focused validator tests. A local `qwen3:1.7b` run correctly converted the forward-30-centimeter example above and returned `VALID`. The earlier reverse request had produced a structurally valid but semantically wrong forward move, so the CLI now audits a single explicit direction and distance against the request. In a fresh local reverse run, the model still emitted malformed extra or missing fields; the validator returned `INVALID` rather than accepting them. The browser walkthrough handles that narrow reverse example deterministically, but this does not establish reliable natural-language interpretation across requests. The larger `qwen3:4b` model timed out in a prior 75-second local trial. These are local tests, not an external accuracy claim.
 
 ## Source and contributions
 

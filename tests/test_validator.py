@@ -37,3 +37,34 @@ def test_unknown_target_is_invalid():
         steps=[RouteStep(action=ActionType.MOVE_TO, target="MADE_UP_TARGET")],
     )
     assert not validate_route(route, GAME).valid
+
+
+def test_explicit_reverse_direction_is_checked_against_source():
+    route = RouteIR(
+        start="BLUE_LEFT_START",
+        steps=[RouteStep(action=ActionType.MOVE_RELATIVE, distance_m=0.30, direction=RelativeDirection.FORWARD)],
+    )
+    result = validate_route(route, GAME, source_text="From blue left start, reverse 30 centimeters.")
+    assert not result.valid
+    assert any(issue.path == "steps[0].direction" for issue in result.issues)
+
+
+def test_correct_explicit_reverse_move_passes_source_check():
+    route = RouteIR(
+        start="BLUE_LEFT_START",
+        steps=[RouteStep(action=ActionType.MOVE_RELATIVE, distance_m=0.30, direction=RelativeDirection.BACKWARD)],
+    )
+    assert validate_route(route, GAME, source_text="From blue left start, reverse 30 centimeters.").valid
+
+
+def test_simple_reverse_request_rejects_extra_turn():
+    route = RouteIR(
+        start="BLUE_LEFT_START",
+        steps=[
+            RouteStep(action=ActionType.TURN_RELATIVE, angle_deg=180),
+            RouteStep(action=ActionType.MOVE_RELATIVE, distance_m=0.30, direction=RelativeDirection.BACKWARD),
+        ],
+    )
+    result = validate_route(route, GAME, source_text="From blue left start, reverse 30 centimeters.")
+    assert not result.valid
+    assert any(issue.path == "steps" for issue in result.issues)

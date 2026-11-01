@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VEX Route IR · guided prototype</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, -apple-system, sans-serif; background: #0c1421; color: #edf3f9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1080px; margin: 0 auto; padding: 36px 24px 60px; }
+    header { margin-bottom: 28px; }
+    .eyebrow { color: #72d6c4; text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 700; }
+    h1 { font-size: clamp(2.3rem, 5vw, 4.3rem); line-height: 1.05; letter-spacing: -.05em; margin: 9px 0 14px; }
+    h2 { font-size: 1.15rem; margin: 0 0 14px; }
+    p { color: #b5c5d6; max-width: 780px; }
+    a { color: #8fe9d9; }
+    .layout { display: grid; grid-template-columns: minmax(300px, .95fr) minmax(320px, 1.05fr); gap: 18px; }
+    .card { background: #142338; border: 1px solid #2a4159; border-radius: 18px; padding: 24px; box-shadow: 0 12px 35px #020a1652; }
+    label { display: block; font-size: .9rem; font-weight: 700; margin-bottom: 8px; }
+    textarea { width: 100%; min-height: 118px; resize: vertical; border: 1px solid #52718a; border-radius: 10px; padding: 13px; background: #0c1929; color: #fff; font: inherit; }
+    button { font: inherit; cursor: pointer; border-radius: 9px; border: 1px solid #5a798f; padding: 9px 13px; color: #edf3f9; background: #203750; }
+    button:hover, button:focus-visible { border-color: #8fe9d9; }
+    button.primary { background: #77d8c7; color: #092026; border-color: #77d8c7; font-weight: 800; margin-top: 12px; }
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 17px; }
+    .examples button { font-size: .86rem; }
+    .status { display: inline-block; border-radius: 99px; padding: 5px 11px; background: #254c45; color: #a7f2d8; font-size: .82rem; font-weight: 800; }
+    .status.warn { background: #5b4231; color: #ffd69b; }
+    .field { margin: 18px 0 12px; border-radius: 12px; overflow: hidden; background: #0a1726; border: 1px solid #34516b; }
+    svg { display: block; width: 100%; height: auto; }
+    .hint { font-size: .82rem; color: #9fb1c3; margin: 0 0 17px; }
+    pre { overflow: auto; max-height: 380px; background: #091522; padding: 18px; border-radius: 10px; color: #d7f3ec; font-size: .78rem; line-height: 1.45; }
+    .validation { padding: 12px 14px; border-left: 3px solid #77d8c7; background: #102c34; border-radius: 0 8px 8px 0; }
+    .validation.warn { border-color: #efba77; background: #342a20; }
+    footer { margin-top: 20px; color: #9fb1c3; font-size: .88rem; }
+    @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } main { padding: 24px 16px 40px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Guided browser prototype · Route IR v0.2</div>
+      <h1>Say the move.<br>Inspect the route.</h1>
+      <p>See how a plain-language movement request becomes structured Route IR and passes a deterministic check before any robot execution. This page is a small, model-free walkthrough. The <a href="https://github.com/RayzerCat76/vex-route-ir-portfolio">repository CLI</a> runs the actual Ollama interpreter and fuller validator.</p>
+    </header>
+    <div class="layout">
+      <section class="card">
+        <h2>1 · Describe one move</h2>
+        <label for="request">Route request</label>
+        <textarea id="request">From blue left start, move forward 30 centimeters.</textarea>
+        <button class="primary" id="interpret" type="button">Interpret and check</button>
+        <div class="examples" aria-label="Example requests">
+          <button type="button" data-example="From blue left start, move forward 30 centimeters.">Forward 30 cm</button>
+          <button type="button" data-example="From blue left start, reverse 30 centimeters.">Reverse 30 cm</button>
+          <button type="button" data-example="From blue left start, move to the nearest goal.">Unknown target</button>
+        </div>
+        <p class="hint">Guided scope: one forward or backward distance in centimeters or meters, starting at blue left or blue right. Other requests stop for clarification instead of producing invented robot actions.</p>
+      </section>
+      <section class="card" aria-live="polite">
+        <h2>2 · Inspect the interpretation</h2>
+        <span class="status" id="status">Ready</span>
+        <div class="field">
+          <svg viewBox="0 0 520 180" role="img" aria-label="Conceptual direction sketch, not a robot trajectory">
+            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#77d8c7" stroke-width="2"/></marker></defs>
+            <rect x="22" y="19" width="476" height="142" rx="10" fill="#11263b" stroke="#55758d"/>
+            <path d="M260 19 V161 M22 90 H498" stroke="#466077" stroke-dasharray="5 7"/>
+            <circle cx="260" cy="90" r="17" fill="#77d8c7"/><text x="260" y="96" text-anchor="middle" font-size="15" font-weight="800" fill="#092026">R</text>
+            <line id="direction-line" x1="260" y1="90" x2="380" y2="90" stroke="#77d8c7" stroke-width="5" marker-end="url(#arrow)"/>
+            <text id="direction-label" x="260" y="145" text-anchor="middle" fill="#d2e4f0" font-size="14">FORWARD · 0.30 m</text>
+          </svg>
+        </div>
+        <p class="hint">Direction sketch only; Route IR does not generate trajectories, C++, or motor commands.</p>
+        <div class="validation" id="validation">VALID · one explicit relative move</div>
+        <pre id="output"></pre>
+      </section>
+    </div>
+    <footer>The field fixture is a prototype sandbox, not an official VEX game definition. No request leaves this page.</footer>
+  </main>
+  <script>
+    const input = document.querySelector('#request');
+    const output = document.querySelector('#output');
+    const status = document.querySelector('#status');
+    const validation = document.querySelector('#validation');
+    const line = document.querySelector('#direction-line');
+    const label = document.querySelector('#direction-label');
+    const simpleMove = /^\s*from\s+blue\s+(left|right)\s+start\s*,?\s*(?:move\s+)?(forward|reverse|back\s+up|backwards?|backward)\s+(\d+(?:\.\d+)?)\s*(centimet(?:er|re)s?|cm|met(?:er|re)s?|m)\s*\.?\s*$/i;
+    function interpret(text) {
+      const match = text.match(simpleMove);
+      const route = {schema_version:'0.2',status:'NEEDS_CLARIFICATION',start:match ? `BLUE_${match[1].toUpperCase()}_START` : null,objective:'BALANCED',steps:[],finish:null,issues:[]};
+      if (!match) {
+        route.issues.push({kind:'AMBIGUOUS_REFERENCE',message:'This guided demo needs one explicit blue start and one relative distance. Use the CLI for richer requests.',blocking:true,step_index:null,clarification_question:'Which blue start and one move do you mean?'});
+        return route;
+      }
+      const [, , word, amount, unit] = match;
+      const distance = Number(amount) / (/^(?:cm|centim)/i.test(unit) ? 100 : 1);
+      const direction = /^forward$/i.test(word) ? 'FORWARD' : 'BACKWARD';
+      if (!Number.isFinite(distance) || distance <= 0 || distance > 5) {
+        route.issues.push({kind:'UNSUPPORTED_CAPABILITY',message:'Distance must be greater than 0 and at most 5 meters in this schema.',blocking:true,step_index:null,clarification_question:null});
+        return route;
+      }
+      route.status = 'READY';
+      route.steps.push({action:'MOVE_RELATIVE',target:null,motion:{speed:'NORMAL',path_style:'SMOOTH',preserve_speed:false},distance_m:Math.round(distance*10000)/10000,direction,angle_deg:null,duration_s:null,mechanism:null,mechanism_state:null,constraints:[]});
+      return route;
+    }
+    function validate(route) {
+      if (route.status !== 'READY') return {valid:false,message:'NEEDS CLARIFICATION · no executable route was invented'};
+      if (!['BLUE_LEFT_START','BLUE_RIGHT_START'].includes(route.start) || route.steps.length !== 1) return {valid:false,message:'INVALID · start or step count failed'};
+      const step=route.steps[0];
+      if (step.action !== 'MOVE_RELATIVE' || !['FORWARD','BACKWARD'].includes(step.direction) || !(step.distance_m>0 && step.distance_m<=5)) return {valid:false,message:'INVALID · relative move fields failed'};
+      return {valid:true,message:'VALID · one explicit relative move'};
+    }
+    function render() {
+      const route=interpret(input.value.trim());
+      const result=validate(route);
+      output.textContent=JSON.stringify(route,null,2);
+      status.textContent=route.status==='READY'?'Ready':'Needs clarification';
+      status.classList.toggle('warn',route.status!=='READY');
+      validation.textContent=result.message;
+      validation.classList.toggle('warn',!result.valid);
+      const direction=route.steps[0]?.direction;
+      line.style.visibility=direction?'visible':'hidden';
+      line.setAttribute('x2',direction==='BACKWARD'?'140':'380');
+      label.textContent=direction?`${direction} · ${route.steps[0].distance_m.toFixed(2)} m`:'No movement preview';
+    }
+    document.querySelector('#interpret').addEventListener('click',render);
+    input.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key==='Enter')render();});
+    document.querySelectorAll('[data-example]').forEach(button=>button.addEventListener('click',()=>{input.value=button.dataset.example;render();}));
+    render();
+  </script>
+</body>
+</html>

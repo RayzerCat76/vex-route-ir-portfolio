@@ -22,7 +22,7 @@ def main() -> None:
     game = GameDefinition.load(args.game)
 
     route = interpret_route(text, game, model=args.model)
-    result = validate_route(route, game)
+    result = validate_route(route, game, source_text=text)
 
     print("\n=== ROUTE IR ===")
     print(json.dumps(route.model_dump(mode="json"), indent=2))

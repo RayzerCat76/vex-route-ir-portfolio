@@ -4,7 +4,9 @@ An early natural-language interface for VEX autonomous-route planning. It conver
 
 ## Try it
 
-Install Python 3.11+ and [Ollama](https://ollama.com/), then run:
+Open the [guided browser prototype](https://rayzercat76.github.io/vex-route-ir-portfolio/) to enter a one-step forward or reverse request, inspect the Route IR JSON, and see a direction sketch and validation result. This page is a deterministic, model-free walkthrough of a small supported subset. It does not run the Ollama interpreter or a robot.
+
+For the actual local-model interpreter, install Python 3.11+ and [Ollama](https://ollama.com/), then run:
 
 ```sh
 python3 -m venv .venv
@@ -14,4 +16,4 @@ ollama pull qwen3:1.7b
 python cli.py "From blue left start, move forward 30 centimeters." --model qwen3:1.7b
 ```
 
-The program prints Route IR JSON and a deterministic validation result. `configs/fake_game.json` is a small prototype fixture, not an official game manual. See [PORTFOLIO.md](PORTFOLIO.md) for the design history, current test evidence, known limitations, and contribution credits.
+The program prints Route IR JSON and a deterministic validation result. For a single explicit move, the CLI now checks the source wording against the model's direction and distance so an opposite-direction interpretation is marked invalid. The small local model can still make other interpretation errors. `configs/fake_game.json` is a small prototype fixture, not an official game manual. See [PORTFOLIO.md](PORTFOLIO.md) for the design history, current test evidence, known limitations, and contribution credits.

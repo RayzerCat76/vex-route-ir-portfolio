@@ -1,9 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 
 from .game import GameDefinition
-from .models import ActionType, ConstraintType, RouteIR, RouteStatus
+from .models import ActionType, ConstraintType, RelativeDirection, RouteIR, RouteStatus
+
+
+_LITERAL_MOVE = re.compile(
+    r"\b(?P<direction>reverse|back\s+up|backwards?|forward)\s+"
+    r"(?P<amount>\d+(?:\.\d+)?)\s*"
+    r"(?P<unit>centimet(?:er|re)s?|cm|met(?:er|re)s?|m)\b",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
@@ -33,7 +42,7 @@ class ValidationResult:
         return self.valid and self.route_status == RouteStatus.READY
 
 
-def validate_route(route: RouteIR, game: GameDefinition) -> ValidationResult:
+def validate_route(route: RouteIR, game: GameDefinition, *, source_text: str | None = None) -> ValidationResult:
     issues: list[ValidationIssue] = []
 
     blocking_model_issues = [issue for issue in route.issues if issue.blocking]
@@ -241,6 +250,37 @@ def validate_route(route: RouteIR, game: GameDefinition) -> ValidationResult:
                         "Terminal facing must be represented either by the final FACE step or by finish.face_target, not both.",
                     )
                 )
+
+    # Audit only a single, literal relative-move request. The general validator
+    # checks Route IR structure; this narrow source check prevents the CLI demo
+    # from presenting an opposite-direction model interpretation as valid.
+    if source_text and route.status == RouteStatus.READY:
+        matches = list(_LITERAL_MOVE.finditer(source_text))
+        # Do not apply the one-step assertion to a request with other actions.
+        has_other_action = re.search(r"\b(?:then|and|after|before|collect|score|wait|turn|face|reposition)\b", source_text, re.IGNORECASE)
+        if len(matches) == 1 and not has_other_action:
+            match = matches[0]
+            prefix = source_text[max(0, match.start() - 16):match.start()]
+            if not re.search(r"(?:do\s+not|don't|never|without)\s*$", prefix, re.IGNORECASE):
+                expected_direction = (
+                    RelativeDirection.FORWARD
+                    if match.group("direction").lower() == "forward"
+                    else RelativeDirection.BACKWARD
+                )
+                if len(route.steps) != 1:
+                    issues.append(ValidationIssue("ERROR", "steps", "One explicit relative move must produce exactly one step."))
+                else:
+                    step = route.steps[0]
+                    if step.action != ActionType.MOVE_RELATIVE:
+                        issues.append(ValidationIssue("ERROR", "steps[0].action", "Explicit relative move was not represented."))
+                        step = None
+                if len(route.steps) == 1 and step is not None:
+                    if step.direction != expected_direction:
+                        issues.append(ValidationIssue("ERROR", "steps[0].direction", f"Direction conflicts with explicit '{match.group('direction')}'."))
+                    unit = match.group("unit").lower()
+                    expected_distance = float(match.group("amount")) / (100 if unit.startswith(("cm", "centim")) else 1)
+                    if step.distance_m is None or abs(step.distance_m - expected_distance) > 0.005:
+                        issues.append(ValidationIssue("ERROR", "steps[0].distance_m", "Distance conflicts with the explicit request."))
 
     return ValidationResult(issues=issues, route_status=route.status)
 
