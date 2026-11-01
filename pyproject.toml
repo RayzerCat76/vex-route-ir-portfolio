@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vex-route-ir"
+version = "0.1.0"
+description = "Local-LLM natural-language to structured VEX autonomous route prototype"
+requires-python = ">=3.11"
+dependencies = [
+  "ollama>=0.4.0",
+  "pydantic>=2.8.0",
+  "PyYAML>=6.0",
+  "beautifulsoup4>=4.12.0",
+  "httpx>=0.27.0"
+]
+
+[project.optional-dependencies]
+personal-crawler = [
+  "yt-dlp[default]",
+  "mlx-whisper; platform_system == 'Darwin' and platform_machine == 'arm64'"
+]
+
+[project.scripts]
+vex-route = "cli:main"
+
+[tool.setuptools]
+packages = ["route_ir"]
+py-modules = ["cli"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

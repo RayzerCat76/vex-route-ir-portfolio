@@ -1,0 +1,28 @@
+{
+  "benchmark": "Route IR v0.2 held-out robustness benchmark",
+  "status": "FROZEN",
+  "schema_version": "0.2",
+  "case_count": 120,
+  "family_counts": {
+    "R01": 10,
+    "R02": 10,
+    "R03": 10,
+    "R04": 10,
+    "R05": 10,
+    "R06": 10,
+    "R07": 10,
+    "R08": 10,
+    "R09": 10,
+    "R10": 10,
+    "R11": 10,
+    "R12": 10
+  },
+  "sha256": "3a3c4e586e5a58b86a1f30cddb3025b21e47524ddb1245ad6d1c2a495f02ae7e",
+  "training_use": "PROHIBITED",
+  "smoke_prompt_overlap": 0,
+  "notes": [
+    "Exactly 10 cases per R01-R12 family.",
+    "Expected outputs are Route IR v0.2 and are validated in CI.",
+    "Exact benchmark wording and expected outputs must not be copied into fine-tuning data."
+  ]
+}

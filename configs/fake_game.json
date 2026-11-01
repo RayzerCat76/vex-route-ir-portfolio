@@ -1,0 +1,59 @@
+{
+  "game_id": "ROUTE_IR_SANDBOX_0_1",
+  "starts": {
+    "BLUE_LEFT_START": [0.30, 0.30, 0.0],
+    "BLUE_RIGHT_START": [0.30, 1.70, 0.0]
+  },
+  "targets": {
+    "CENTER_OBJECT": {
+      "kind": "game_object",
+      "x_m": 1.80,
+      "y_m": 1.00,
+      "tags": ["collectable", "center"]
+    },
+    "LEFT_OBJECT": {
+      "kind": "game_object",
+      "x_m": 1.25,
+      "y_m": 1.55,
+      "tags": ["collectable", "left"]
+    },
+    "LEFT_GOAL": {
+      "kind": "goal",
+      "x_m": 2.80,
+      "y_m": 1.55,
+      "tags": ["scoring", "left"]
+    },
+    "RIGHT_GOAL": {
+      "kind": "goal",
+      "x_m": 2.80,
+      "y_m": 0.45,
+      "tags": ["scoring", "right"]
+    },
+    "FIELD_CENTER": {
+      "kind": "reference_point",
+      "x_m": 1.80,
+      "y_m": 1.00,
+      "tags": ["reference"]
+    },
+    "CENTER_OBSTACLE": {
+      "kind": "obstacle",
+      "x_m": 2.15,
+      "y_m": 1.00,
+      "tags": ["obstacle"]
+    },
+    "RESTRICTED_ZONE": {
+      "kind": "zone",
+      "x_m": 2.35,
+      "y_m": 1.00,
+      "tags": ["restricted"]
+    }
+  },
+  "mechanisms": {
+    "INTAKE": ["ON", "OFF", "REVERSE"],
+    "SCORER": ["STOWED", "READY", "SCORE"]
+  },
+  "drive": {
+    "type": "differential",
+    "can_strafe": false
+  }
+}
