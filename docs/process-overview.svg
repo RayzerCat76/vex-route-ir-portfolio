@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+    <style>
+      .eyebrow { font: 700 21px Arial, Helvetica, sans-serif; letter-spacing: 4px; }
+      .title { font: 700 50px Arial, Helvetica, sans-serif; fill: #f1f5fb; }
+      .subtitle { font: 26px Arial, Helvetica, sans-serif; fill: #b9c8da; }
+      .number { font: 700 22px Arial, Helvetica, sans-serif; fill: #081522; }
+      .date { font: 700 18px Arial, Helvetica, sans-serif; letter-spacing: 1.5px; }
+      .cardtitle { font: 700 29px Arial, Helvetica, sans-serif; fill: #f1f5fb; }
+      .body { font: 23px Arial, Helvetica, sans-serif; fill: #d2dce8; }
+      .evidence { font: 17px Arial, Helvetica, sans-serif; fill: #a9bbce; }
+      .footer { font: 20px Arial, Helvetica, sans-serif; fill: #b9c8da; }
+    </style>
+    <rect width="1600" height="900" fill="#081522"/>
+    <rect x="60" y="61" width="85" height="8" rx="4" fill="#7bdad0"/>
+    <text x="60" y="112" class="eyebrow" fill="#7bdad0">BUILD PROCESS / EVIDENCE MAP</text>
+    <text x="60" y="170" class="title">VEX Route IR: detect a wrong move before execution</text>
+    <text x="60" y="209" class="subtitle">Interpretation → structured route → independent check</text>
+
+    <rect x="60" y="225" width="460" height="520" rx="24" fill="#142436" stroke="#31445a" stroke-width="2"/>
+    <circle cx="107" cy="274" r="18" fill="#7bdad0"/>
+    <text x="107" y="282" text-anchor="middle" class="number">1</text>
+    <text x="94" y="330" class="date" fill="#7bdad0">FIRST DESIGN · V0.1</text>
+    <text x="94" y="363" class="cardtitle">Separate model and rules</text>
+    <text x="94" y="394" class="body">A model proposes Route IR.</text><text x="94" y="432" class="body">A deterministic validator checks</text><text x="94" y="470" class="body">the structure and game fixture.</text><text x="94" y="508" class="body">The first test corpus was frozen.</text>
+    <line x1="94" y1="654" x2="486" y2="654" stroke="#31445a"/>
+    <text x="94" y="686" class="evidence">route_ir/models.py · validator.py · eval/</text>
+
+    <rect x="570" y="225" width="460" height="520" rx="24" fill="#142436" stroke="#31445a" stroke-width="2"/>
+    <circle cx="617" cy="274" r="18" fill="#7bdad0"/>
+    <text x="617" y="282" text-anchor="middle" class="number">2</text>
+    <text x="604" y="330" class="date" fill="#7bdad0">FAILURE → CHANGE</text>
+    <text x="604" y="363" class="cardtitle">Check the source wording</text>
+    <text x="604" y="394" class="body">Reverse 30 cm once became a</text><text x="604" y="432" class="body">structurally valid FORWARD move.</text><text x="604" y="470" class="body">The CLI now audits explicit</text><text x="604" y="508" class="body">direction and distance.</text>
+    <line x1="604" y1="654" x2="996" y2="654" stroke="#31445a"/>
+    <text x="604" y="686" class="evidence">cli.py · source-text validation</text>
+
+    <rect x="1080" y="225" width="460" height="520" rx="24" fill="#142436" stroke="#31445a" stroke-width="2"/>
+    <circle cx="1127" cy="274" r="18" fill="#7bdad0"/>
+    <text x="1127" y="282" text-anchor="middle" class="number">3</text>
+    <text x="1114" y="330" class="date" fill="#7bdad0">REAL LOCAL RUN · 1 NOV</text>
+    <text x="1114" y="363" class="cardtitle">Inspect the outcome</text>
+    <text x="1114" y="394" class="body">Forward 30 cm became</text><text x="1114" y="432" class="body">MOVE_RELATIVE · FORWARD · 0.3 m.</text><text x="1114" y="470" class="body">The validator returned VALID;</text><text x="1114" y="508" class="body">malformed outputs remain rejected.</text>
+    <line x1="1114" y1="654" x2="1506" y2="654" stroke="#31445a"/>
+    <text x="1114" y="686" class="evidence">docs/real-model-forward.txt</text>
+
+    <path d="M530 480 l27 0 m-10 -10 l10 10 -10 10 M1040 480 l27 0 m-10 -10 l10 10 -10 10"
+          stroke="#7bdad0" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="60" y="820" class="footer">The hosted walkthrough is model-free. The local CLI run uses qwen3:1.7b; no robot is controlled.</text>
+    <text x="60" y="854" class="footer">Source files, tests, and limits: see docs/BUILD_PROCESS.md in the project repository.</text>
+  </svg>

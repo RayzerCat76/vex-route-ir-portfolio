@@ -1,5 +1,7 @@
 # Route IR v0.1 Evaluation Set
 
+This file documents the historical frozen v0.1 corpus. The current portfolio runtime uses Route IR v0.2; the `corpus_v02_*.jsonl` files are separate v0.2 fixtures. See the [build-process map](../docs/BUILD_PROCESS.md) and [README](../README.md) for the current reviewer path.
+
 This benchmark is the first frozen human-authored test set for the natural-language -> Route IR boundary.
 
 ## Composition

@@ -17,3 +17,7 @@ python cli.py "From blue left start, move forward 30 centimeters." --model qwen3
 ```
 
 The program prints Route IR JSON and a deterministic validation result. For a single explicit move, the CLI now checks the source wording against the model's direction and distance so an opposite-direction interpretation is marked invalid. The small local model can still make other interpretation errors. `configs/fake_game.json` is a small prototype fixture, not an official game manual. See [PORTFOLIO.md](PORTFOLIO.md) for the design history, current test evidence, known limitations, and contribution credits.
+
+## Where to look in the source
+
+The [build-process map](docs/BUILD_PROCESS.md) connects the first schema, a detected reverse-direction error, and the current guarded interpreter. Follow [CLI input](cli.py) → [Ollama interpretation](route_ir/llm.py) → [Route IR schema](route_ir/models.py) → [deterministic validation](route_ir/validator.py). [Focused tests](tests/test_validator.py) cover the validator, and [a real local-model forward run](docs/real-model-forward.txt) records the CLI output. The [browser page](docs/index.html) is a separate, narrow deterministic demonstration. The `eval/` directory holds frozen test corpora; `distillation_*` modules are not used by either reviewer demo.

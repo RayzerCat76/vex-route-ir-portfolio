@@ -22,6 +22,8 @@ The command prints the model's Route IR JSON followed by the deterministic valid
 
 The first design separated language interpretation from deterministic validation. The current source uses a v0.2 schema with explicit readiness status, route steps, issues, and motion constraints. That separation makes an incorrect route inspectable before any robot execution stage is built.
 
+The [build-process map](docs/BUILD_PROCESS.md) links the schema, a discovered direction error, the guard added in response, and a captured real-model CLI result.
+
 ## Verified scope and limitation
 
 On 1 November 2026, the current portfolio snapshot passed six focused validator tests. A local `qwen3:1.7b` run correctly converted the forward-30-centimeter example above and returned `VALID`. The earlier reverse request had produced a structurally valid but semantically wrong forward move, so the CLI now audits a single explicit direction and distance against the request. In a fresh local reverse run, the model still emitted malformed extra or missing fields; the validator returned `INVALID` rather than accepting them. The browser walkthrough handles that narrow reverse example deterministically, but this does not establish reliable natural-language interpretation across requests. The larger `qwen3:4b` model timed out in a prior 75-second local trial. These are local tests, not an external accuracy claim.

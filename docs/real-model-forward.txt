@@ -1,0 +1,35 @@
+Local CLI check, 1 November 2026
+Model: qwen3:1.7b
+Command: python cli.py "From blue left start, move forward 30 centimeters." --model qwen3:1.7b
+
+=== ROUTE IR ===
+{
+  "schema_version": "0.2",
+  "status": "READY",
+  "start": "BLUE_LEFT_START",
+  "objective": "BALANCED",
+  "steps": [
+    {
+      "action": "MOVE_RELATIVE",
+      "target": null,
+      "motion": {
+        "speed": "NORMAL",
+        "path_style": "SMOOTH",
+        "preserve_speed": false
+      },
+      "distance_m": 0.3,
+      "direction": "FORWARD",
+      "angle_deg": null,
+      "duration_s": null,
+      "mechanism": null,
+      "mechanism_state": null,
+      "constraints": []
+    }
+  ],
+  "finish": null,
+  "issues": []
+}
+
+=== VALIDATION ===
+VALID
+No issues.
