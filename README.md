@@ -6,6 +6,8 @@ An early natural-language interface for VEX autonomous-route planning. It conver
 
 Open the [guided browser prototype](https://rayzercat76.github.io/vex-route-ir-portfolio/) to enter a one-step forward or reverse request, inspect the Route IR JSON, and see a direction sketch and validation result. This page is a deterministic, model-free walkthrough of a small supported subset. It does not run the Ollama interpreter or a robot.
 
+Watch the [6.67-second guided demo](docs/guided-demo.mp4) for a valid reverse request, an ambiguous request that stops at **Needs clarification**, and a return to the forward example. The recording shows the model-free browser walkthrough.
+
 For the actual local-model interpreter, install Python 3.11+ and [Ollama](https://ollama.com/), then run:
 
 ```sh
